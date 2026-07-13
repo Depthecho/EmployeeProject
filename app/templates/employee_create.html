@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Создать сотрудника{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 style="color: #ffffff;"><i class="bi bi-person-plus" style="color: #00d4ff;"></i> Новый сотрудник</h4>
+            </div>
+            <div class="card-body">
+                {% if request.query_params.get('error') %}
+                <div class="alert alert-danger">
+                    {{ request.query_params.get('error') }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/employees">
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #94a3b8;">ФИО</label>
+                        <input type="text" name="full_name" class="form-control" required placeholder="Введите ФИО сотрудника" style="color: #e2e8f0;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #94a3b8;">Подразделение</label>
+                        <input type="text" name="department" class="form-control" required placeholder="Введите подразделение" style="color: #e2e8f0;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #94a3b8;">Должность</label>
+                        <input type="text" name="position" class="form-control" required placeholder="Введите должность" style="color: #e2e8f0;">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Создать
+                    </button>
+                    <a href="/employees" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
