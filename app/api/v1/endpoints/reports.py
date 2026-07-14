@@ -10,4 +10,10 @@ router = APIRouter()
 async def get_statistics(
     service: ReportService = Depends(get_report_service)
 ):
+    """
+    Получение общей статистики по системе:
+    - Количество заявок по статусам
+    - Количество сотрудников по подразделениям
+    - Другие агрегированные данные
+    """
     return await service.get_statistics()

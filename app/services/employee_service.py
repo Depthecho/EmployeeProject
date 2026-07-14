@@ -10,6 +10,7 @@ from app.models.employee import EmployeeModel
 
 
 class EmployeeService:
+    """Сервис для работы с сотрудниками"""
 
     def __init__(
             self,

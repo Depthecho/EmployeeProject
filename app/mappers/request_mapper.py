@@ -9,11 +9,17 @@ from app.mappers.base import BaseMapper
 
 
 class RequestMapper(BaseMapper[Request, RequestModel]):
+    """
+    Маппер для заявок.
+    """
 
     def __init__(self):
         super().__init__(Request, RequestModel)
 
     def to_domain(self, orm_obj: Optional[RequestModel]) -> Optional[Request]:
+        """
+        Преобразование ORM-модели в доменную модель.
+        """
         if orm_obj is None:
             return None
 
@@ -29,6 +35,9 @@ class RequestMapper(BaseMapper[Request, RequestModel]):
         )
 
     def to_orm(self, domain_obj: Optional[Request]) -> Optional[RequestModel]:
+        """
+        Преобразование доменной модели в ORM-модель.
+        """
         if domain_obj is None:
             return None
 
@@ -44,9 +53,15 @@ class RequestMapper(BaseMapper[Request, RequestModel]):
         )
 
     def to_domain_list(self, orm_list: List[RequestModel]) -> List[Request]:
+        """
+        Преобразование списка ORM-моделей в список доменных моделей.
+        """
         return [self.to_domain(obj) for obj in orm_list] if orm_list else []
 
     def domain_to_response(self, domain: Request) -> RequestResponse:
+        """
+        Преобразование доменной модели в Response-схему для API.
+        """
         return RequestResponse(
             id=domain.id,
             number=domain.number,
@@ -59,6 +74,10 @@ class RequestMapper(BaseMapper[Request, RequestModel]):
         )
 
     def create_to_domain(self, schema: RequestCreate) -> Request:
+        """
+        Преобразование Create-схемы в доменную модель.
+        Используется при создании новой заявки.
+        """
         return Request(
             author_id=schema.author_id,
             executor_id=schema.executor_id,
@@ -69,7 +88,12 @@ class RequestMapper(BaseMapper[Request, RequestModel]):
         )
 
     def update_to_domain(self, schema: RequestUpdate) -> Request:
+        """
+        Преобразование Update-схемы в доменную модель.
+        Используется при обновлении заявки.
+        """
         return Request(
             description=schema.description or "",
+            # Если дедлайн не указан, используем текущее время (будет заменено в сервисе)
             deadline=schema.deadline.replace(tzinfo=None) if schema.deadline else datetime.utcnow()
         )

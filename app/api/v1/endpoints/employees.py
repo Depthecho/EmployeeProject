@@ -10,12 +10,14 @@ router = APIRouter()
 
 @router.get("/", response_model=List[EmployeeResponse])
 async def get_employees(
+    # Параметры фильтрации и пагинации
     department: Optional[str] = Query(None, description="Фильтр по подразделению"),
     search: Optional[str] = Query(None, description="Поиск по ФИО"),
     skip: int = Query(0, ge=0, description="Пропустить записей"),
     limit: int = Query(100, ge=1, le=1000, description="Количество записей"),
     service: EmployeeService = Depends(get_employee_service)
 ):
+    """Получение списка всех сотрудников с фильтрацией и пагинацией"""
     employees = await service.get_all(
         department=department,
         search=search,
@@ -30,6 +32,7 @@ async def get_employee(
     employee_id: int,
     service: EmployeeService = Depends(get_employee_service)
 ):
+    """Получение сотрудника по ID"""
     employee = await service.get_by_id(employee_id)
     if not employee:
         raise HTTPException(
@@ -44,6 +47,7 @@ async def create_employee(
     employee_data: EmployeeCreate,
     service: EmployeeService = Depends(get_employee_service)
 ):
+    """Создание нового сотрудника"""
     return await service.create(employee_data)
 
 
@@ -53,6 +57,7 @@ async def update_employee(
     employee_data: EmployeeUpdate,
     service: EmployeeService = Depends(get_employee_service)
 ):
+    """Обновление данных сотрудника (частичное)"""
     employee = await service.update(employee_id, employee_data)
     if not employee:
         raise HTTPException(
@@ -67,6 +72,7 @@ async def delete_employee(
     employee_id: int,
     service: EmployeeService = Depends(get_employee_service)
 ):
+    """Удаление сотрудника по ID"""
     deleted = await service.delete(employee_id)
     if not deleted:
         raise HTTPException(
@@ -80,4 +86,5 @@ async def delete_employee(
 async def get_statistics(
     service: EmployeeService = Depends(get_employee_service)
 ):
+    """Получение статистики по сотрудникам (количество по подразделениям и т.д.)"""
     return await service.get_statistics()

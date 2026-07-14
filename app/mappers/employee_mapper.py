@@ -6,12 +6,18 @@ from app.mappers.base import BaseMapper
 
 
 class EmployeeMapper(BaseMapper[Employee, EmployeeModel]):
+    """
+    Маппер для сотрудников.
+    """
 
     def __init__(self):
         super().__init__(Employee, EmployeeModel)
 
-
     def to_domain(self, orm_obj: Optional[EmployeeModel]) -> Optional[Employee]:
+        """
+        Преобразование ORM-модели в доменную модель.
+        Переопределяем для явного маппинга полей.
+        """
         if orm_obj is None:
             return None
 
@@ -25,6 +31,10 @@ class EmployeeMapper(BaseMapper[Employee, EmployeeModel]):
         )
 
     def to_orm(self, domain_obj: Optional[Employee]) -> Optional[EmployeeModel]:
+        """
+        Преобразование доменной модели в ORM-модель.
+        Переопределяем для явного маппинга полей.
+        """
         if domain_obj is None:
             return None
 
@@ -38,10 +48,16 @@ class EmployeeMapper(BaseMapper[Employee, EmployeeModel]):
         )
 
     def to_domain_list(self, orm_list: List[EmployeeModel]) -> List[Employee]:
+        """
+        Преобразование списка ORM-моделей в список доменных моделей.
+        """
         return [self.to_domain(obj) for obj in orm_list] if orm_list else []
 
 
     def domain_to_response(self, domain: Employee) -> EmployeeResponse:
+        """
+        Преобразование доменной модели в Response-схему для API.
+        """
         return EmployeeResponse(
             id=domain.id,
             full_name=domain.full_name,
@@ -52,6 +68,10 @@ class EmployeeMapper(BaseMapper[Employee, EmployeeModel]):
         )
 
     def create_to_domain(self, schema: EmployeeCreate) -> Employee:
+        """
+        Преобразование Create-схемы в доменную модель.
+        Используется при создании нового сотрудника.
+        """
         return Employee(
             full_name=schema.full_name,
             department=schema.department,
@@ -59,6 +79,10 @@ class EmployeeMapper(BaseMapper[Employee, EmployeeModel]):
         )
 
     def update_to_domain(self, schema: EmployeeUpdate) -> Employee:
+        """
+        Преобразование Update-схемы в доменную модель.
+        Используется при обновлении данных сотрудника.
+        """
         return Employee(
             full_name=schema.full_name or "",
             department=schema.department or "",

@@ -18,6 +18,7 @@ from app.services.employee_service import EmployeeService
 
 
 class RequestService:
+    """Сервис для работы с заявками"""
     def __init__(
         self,
         repository: RequestRepository,

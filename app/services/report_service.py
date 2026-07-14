@@ -1,6 +1,3 @@
-"""
-Назначение: Сервис для формирования отчетов.
-"""
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 from app.repositories.request_repository import RequestRepository

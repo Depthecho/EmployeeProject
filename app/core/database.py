@@ -10,6 +10,7 @@ from app.core.config import settings
 
 Base = declarative_base()
 
+# Создание асинхронного движка для подключения к БД
 engine = create_async_engine(
     settings.database_url_async,
     echo=True,
@@ -18,6 +19,7 @@ engine = create_async_engine(
     pool_pre_ping=True,
 )
 
+# Фабрика сессий для работы с БД
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
@@ -27,6 +29,10 @@ AsyncSessionLocal = async_sessionmaker(
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    """
+    Генератор сессий для внедрения зависимости.
+    Используется как Depends(get_session) в эндпоинтах.
+    """
     async with AsyncSessionLocal() as session:
         try:
             yield session
@@ -35,6 +41,9 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def init_db():
+    """
+    Инициализация базы данных.
+    """
     from app.models import employee
 
     async with engine.begin() as conn:

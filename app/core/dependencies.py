@@ -15,24 +15,29 @@ from app.validators.request_validator import RequestValidator
 async def get_employee_repository(
     session: AsyncSession = Depends(get_session)
 ) -> EmployeeRepository:
+    """Фабрика репозитория сотрудников"""
     return EmployeeRepository(session)
 
 
 async def get_request_repository(
     session: AsyncSession = Depends(get_session)
 ) -> RequestRepository:
+    """Фабрика репозитория заявок"""
     return RequestRepository(session)
 
 
 def get_employee_mapper() -> EmployeeMapper:
+    """Фабрика маппера сотрудников"""
     return EmployeeMapper()
 
 
 def get_request_mapper() -> RequestMapper:
+    """Фабрика маппера заявок"""
     return RequestMapper()
 
 
 def get_request_validator() -> RequestValidator:
+    """Фабрика валидатора заявок"""
     return RequestValidator()
 
 
@@ -40,6 +45,7 @@ async def get_employee_service(
     repository: EmployeeRepository = Depends(get_employee_repository),
     mapper: EmployeeMapper = Depends(get_employee_mapper),
 ) -> EmployeeService:
+    """Фабрика сервиса сотрудников"""
     return EmployeeService(repository, mapper)
 
 
@@ -49,11 +55,12 @@ async def get_request_service(
     employee_service: EmployeeService = Depends(get_employee_service),
     employee_repository: EmployeeRepository = Depends(get_employee_repository),
 ) -> RequestService:
+    """Фабрика сервиса заявок с внедрением зависимостей"""
     return RequestService(
         repository=repository,
         mapper=mapper,
-        employee_service=employee_service,
-        employee_repository=employee_repository
+        employee_service=employee_service,  # Для проверки существования сотрудников
+        employee_repository=employee_repository  # Для прямого доступа к данным сотрудников
     )
 
 
@@ -61,4 +68,5 @@ async def get_report_service(
     request_repository: RequestRepository = Depends(get_request_repository),
     employee_repository: EmployeeRepository = Depends(get_employee_repository),
 ) -> ReportService:
+    """Фабрика сервиса отчетов (агрегированные данные)"""
     return ReportService(request_repository, employee_repository)

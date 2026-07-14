@@ -1,6 +1,3 @@
-"""
-Назначение: Валидаторы бизнес-правил для заявок.
-"""
 from app.domain.enums.request_status import RequestStatus
 
 
@@ -8,7 +5,6 @@ class RequestValidator:
     """
     Валидатор для проверки бизнес-правил заявок.
     """
-
     @staticmethod
     def validate_status_transition(
             current_status: RequestStatus,
@@ -16,11 +12,6 @@ class RequestValidator:
     ) -> bool:
         """
         Проверить, допустим ли переход из одного статуса в другой.
-
-        Бизнес-правило:
-        - Новая → В работе ✅
-        - В работе → Выполнена ✅
-        - Выполнена → ❌ (нельзя изменить)
         """
         return current_status.can_transition_to(new_status)
 
@@ -30,9 +21,6 @@ class RequestValidator:
     ) -> bool:
         """
         Проверить, можно ли менять исполнителя.
-
-        Бизнес-правило:
-        - Нельзя менять исполнителя у выполненной заявки
         """
         return current_status != RequestStatus.COMPLETED
 

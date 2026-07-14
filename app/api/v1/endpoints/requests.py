@@ -27,6 +27,8 @@ async def get_requests(
     limit: int = Query(100, ge=1, le=1000, description="Количество записей"),
     service: RequestService = Depends(get_request_service)
 ):
+    """Получение списка заявок с фильтрацией и пагинацией"""
+    # Сборка объекта фильтров
     filters = RequestFilterParams(
         status=status,
         executor_id=executor_id,
@@ -43,6 +45,7 @@ async def get_request(
     request_id: int,
     service: RequestService = Depends(get_request_service)
 ):
+    """Получение заявки по ID"""
     request_obj = await service.get_by_id(request_id)
     if not request_obj:
         raise HTTPException(
@@ -57,6 +60,7 @@ async def create_request(
     request_data: RequestCreate,
     service: RequestService = Depends(get_request_service)
 ):
+    """Создание новой заявки"""
     return await service.create(request_data)
 
 
@@ -66,6 +70,7 @@ async def update_request(
     request_data: RequestUpdate,
     service: RequestService = Depends(get_request_service)
 ):
+    """Обновление данных заявки (частичное)"""
     request_obj = await service.update(request_id, request_data)
     if not request_obj:
         raise HTTPException(
@@ -81,6 +86,7 @@ async def update_request_status(
     status_update: RequestStatusUpdate,
     service: RequestService = Depends(get_request_service)
 ):
+    """Обновление статуса заявки (отдельный эндпоинт для смены статуса)"""
     request_obj = await service.update_status(request_id, status_update.new_status)
     if not request_obj:
         raise HTTPException(
@@ -96,6 +102,7 @@ async def update_request_executor(
     executor_update: RequestExecutorUpdate,
     service: RequestService = Depends(get_request_service)
 ):
+    """Назначение/смена исполнителя заявки"""
     request_obj = await service.update_executor(request_id, executor_update.executor_id)
     if not request_obj:
         raise HTTPException(
@@ -110,6 +117,7 @@ async def delete_request(
     request_id: int,
     service: RequestService = Depends(get_request_service)
 ):
+    """Удаление заявки по ID"""
     deleted = await service.delete(request_id)
     if not deleted:
         raise HTTPException(
@@ -126,4 +134,8 @@ async def get_overdue_requests_for_executor(
     limit: int = Query(100, ge=1, le=1000, description="Количество записей"),
     service: RequestService = Depends(get_request_service)
 ):
+    """
+    Получение просроченных заявок для конкретного исполнителя
+    (дедлайн меньше текущей даты, а статус не completed)
+    """
     return await service.get_overdue_for_executor(executor_id, skip=skip, limit=limit)

@@ -7,6 +7,9 @@ from app.domain.enums.request_status import RequestStatus
 
 
 class RequestModel(Base):
+    """
+    ORM-модель заявки для базы данных.
+    """
     __tablename__ = "requests"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -18,21 +21,30 @@ class RequestModel(Base):
     deadline = Column(DateTime, nullable=False)
     status = Column(Enum(RequestStatus), default=RequestStatus.NEW, nullable=False)
 
+    # СВЯЗИ С ТАБЛИЦЕЙ СОТРУДНИКОВ
+    # Автор заявки (связь с EmployeeModel)
     author = relationship(
         "EmployeeModel",
         foreign_keys=[author_id],
         back_populates="requests_created"
     )
+
+    # Исполнитель заявки (связь с EmployeeModel)
     executor = relationship(
         "EmployeeModel",
         foreign_keys=[executor_id],
         back_populates="requests_assigned"
     )
 
+    # ИНДЕКСЫ ДЛЯ УСКОРЕНИЯ ЗАПРОСОВ
     __table_args__ = (
+        # Составной индекс для фильтрации по исполнителю + статусу + дедлайну
         Index("idx_requests_executor_status_deadline", "executor_id", "status", "deadline"),
+        # Индекс для фильтрации по автору + статусу
         Index("idx_requests_author_status", "author_id", "status"),
+        # Индекс для фильтрации по статусу + дедлайну (просроченные заявки)
         Index("idx_requests_status_deadline", "status", "deadline"),
+        # Индекс для поиска по номеру заявки
         Index("idx_requests_number", "number"),
     )
 

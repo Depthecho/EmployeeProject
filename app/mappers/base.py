@@ -6,12 +6,25 @@ ORMEntity = TypeVar('ORMEntity')
 
 
 class BaseMapper(Generic[DomainEntity, ORMEntity]):
+    """
+    Базовый абстрактный маппер для преобразования между доменными и ORM-моделями.
+    """
 
     def __init__(self, domain_class: Type[DomainEntity], orm_class: Type[ORMEntity]):
+        """
+        Инициализация маппера с классами моделей.
+
+        Args:
+            domain_class: Класс доменной модели (dataclass)
+            orm_class: Класс ORM-модели (SQLAlchemy)
+        """
         self.domain_class = domain_class
         self.orm_class = orm_class
 
     def to_domain(self, orm_obj: Optional[ORMEntity]) -> Optional[DomainEntity]:
+        """
+        Преобразование ORM-объекта в доменный объект.
+        """
         if orm_obj is None:
             return None
 
@@ -25,6 +38,9 @@ class BaseMapper(Generic[DomainEntity, ORMEntity]):
         return self.domain_class(**data)
 
     def to_orm(self, domain_obj: Optional[DomainEntity]) -> Optional[ORMEntity]:
+        """
+        Преобразование доменного объекта в ORM-объект.
+        """
         if domain_obj is None:
             return None
 
@@ -37,10 +53,17 @@ class BaseMapper(Generic[DomainEntity, ORMEntity]):
                 if value is not None:
                     data[field] = value
 
+        # Создание ORM-объекта с собранными данными
         return self.orm_class(**data)
 
     def to_domain_list(self, orm_list: List[ORMEntity]) -> List[DomainEntity]:
+        """
+        Преобразование списка ORM-объектов в список доменных объектов.
+        """
         return [self.to_domain(obj) for obj in orm_list] if orm_list else []
 
     def to_orm_list(self, domain_list: List[DomainEntity]) -> List[ORMEntity]:
+        """
+        Преобразование списка доменных объектов в список ORM-объектов.
+        """
         return [self.to_orm(obj) for obj in domain_list] if domain_list else []
