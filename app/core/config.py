@@ -31,7 +31,7 @@ class Settings(BaseSettings):
 
     # Настройки для тестовых данных
     test_employees_count: int = Field(default=1000, description="Количество тестовых сотрудников")
-    test_requests_count: int = Field(default=10000, description="Количество тестовых заявок")
+    test_requests_count: int = Field(default=1000000, description="Количество тестовых заявок")
     test_batch_size: int = Field(default=1000, description="Размер батча для вставки тестовых данных")
 
     model_config = SettingsConfigDict(
